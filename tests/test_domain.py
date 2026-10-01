@@ -2,6 +2,9 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
+
+from app.contracts import StrategyInput
 
 from modules.broker import DummyBroker, LiveBroker
 from modules.risk import market_session, validate
@@ -124,3 +127,9 @@ def test_dummy_limit_and_partial():
 def test_live_adapters_cannot_place():
     with pytest.raises(DomainError, match="contract validation"):
         LiveBroker("DHAN").place({})
+
+
+@pytest.mark.parametrize("schedule", ["09:10", "09:14", "15:30"])
+def test_schedule_rejects_outside_execution_window(schedule):
+    with pytest.raises(ValidationError):
+        StrategyInput(name="ETF", budget="2500", schedule_time=schedule)

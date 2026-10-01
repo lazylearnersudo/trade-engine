@@ -31,7 +31,7 @@ class StrategyInput(Contract):
     limit_price: Decimal | None = Field(default=None, gt=0, le=1000000, decimal_places=4)
     enabled: bool = False
     schedule_time: str | None = Field(
-        default=None, pattern=r"^(?:09:(?:[1-5][0-9])|1[0-4]:[0-5][0-9]|15:[0-2][0-9])$"
+        default=None, pattern=r"^(?:09:(?:1[5-9]|[2-5][0-9])|1[0-4]:[0-5][0-9]|15:[0-2][0-9])$"
     )
 
 

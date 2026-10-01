@@ -1,0 +1,31 @@
+# Local/private context
+.docs/
+prompts/
+.pat/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Common generated output
+node_modules/
+dist/
+build/
+coverage/
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+target/
+*.log

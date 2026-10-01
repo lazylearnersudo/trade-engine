@@ -1,39 +1,13 @@
 # Architecture
 
-## Objective
+FastAPI composes domain modules, a browser-native UI and a persistent scheduler. PostgreSQL stores operational state in both environments; production uses the main Supabase database/Auth. No backtesting or historical market-data platform is included.
 
-Trade Engine is a modular trading platform. Phase 1 focuses on execution management, broker integration, application state, and risk controls. Backtesting and historical market-data management are later concerns.
+Strategy produces broker-neutral ETF BUY intent. Risk validates it. Execution owns persisted run/order/fill state and calls capability-based adapters. Dummy execution supports market, limit, partial, rejection, outage and ambiguous scenarios. External order capabilities are disabled pending adapter and account contract validation.
 
-## Composition
+PostgreSQL advisory transaction locks serialize submissions, reservations and operational mutations. Unique idempotency keys prevent duplicate schedule/manual retries. Unknown submissions stay ambiguous. Startup reconciliation surfaces interrupted states. Dummy effects commit atomically with order and audit. Future live HTTP placement requires a durable submission record committed before contacting the broker; do not insert live calls into the current transaction.
 
-The top-level application is deliberately thin. It composes module UIs and provides shared application concerns. Business capabilities remain inside modules.
+Quotes are simulated and timestamped. The dummy scheduler refreshes them. Live execution must acquire broker quotes and cannot rely on manually entered prices. Risk validates quantity/value, daily capital, exposure, open orders, cash/reservations, instrument/account/broker permissions, session times and freshness. Exchange holidays remain an operator responsibility.
 
-A module owns its behavior and may expose a UI, service/API, or both. A module should not contain layers it does not need.
+Local authentication uses Argon2 and hashed opaque sessions; admin/admin is local-only. Production verifies Supabase identities each request and reads roles from the application database. USER data is scoped by ownership. ADMIN operates global controls; SUPERUSER assigns roles. Tables use the private trade schema; migration tracking is explicitly public.trade_migrations to avoid search-path ambiguity.
 
-## Runtime modes
-
-### Local
-
-The complete application must be runnable without cloud infrastructure or live broker accounts. Local substitutes/adapters provide required infrastructure and broker behavior.
-
-### Deployed
-
-The deployed topology may use Vercel for the web application, Oracle Cloud for continuously running services, and Supabase for application data. Exact technology and deployment choices are finalized separately.
-
-Supabase application storage is not a market-data store.
-
-## Broker boundary
-
-Broker-specific APIs sit behind a common broker boundary. A dummy broker is a first-class implementation for development and automated testing. Live broker integrations must not leak broker-specific behavior into unrelated business modules.
-
-## UI
-
-The application shell owns navigation, shared layout, session/auth integration, notifications, and light/dark/system theme behavior. Module UIs use shared visual primitives and tokens.
-
-## Testing
-
-Tests are part of module ownership. Behavioral changes should be represented by tests where practical. Integration tests protect contracts between modules/adapters, and regression tests protect previously fixed failures.
-
-## Future backtesting
-
-Backtesting is intentionally separated from Phase 1. Historical data may be sourced from external providers and stored independently from the primary application database. This concern must not complicate the initial execution platform.
+OCI Docker hosts persistent execution and optionally the UI behind Caddy. Vercel may host the static UI with secure API rewrites. Secrets never enter images/client bundles. Default execution is DUMMY; local live execution and unsupported production arming fail closed. Schedules use Asia/Kolkata; timestamps are UTC.

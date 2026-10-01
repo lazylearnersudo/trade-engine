@@ -1,23 +1,13 @@
 # Trade Engine
 
-A modular trading execution platform designed to run locally for development and testing and as a deployed application.
+A modular ETF execution and risk workspace. FastAPI serves a responsive UI and persistent scheduler; PostgreSQL stores strategies, runs, orders, fills, positions, limits and audit. Production authentication uses Supabase Auth.
 
-## Status
+Run `docker compose up --build`, open `http://localhost:8000`, and sign in with `admin` / `admin`. These credentials exist only in local mode. All default prices and fills are simulated.
 
-Repository foundation only. Application technology choices and business modules are added deliberately as requirements are finalized.
+Features: configurable ETF strategies and run history, orders/cancellation, positions, broker status, risk limits, kill switch, reconciliation, activity, administration and system/light/dark themes. Authorization is enforced server-side.
 
-## Start here
+Live order routing is disabled. Dhan, FYERS and Zerodha provide optional credential-backed profile checks; Shoonya awaits OAuth validation. Tokens alone cannot enable live orders. Local LIVE mode is rejected at startup and execution.
 
-- Engineering rules: `INSTRUCTIONS.md`
-- Repository navigation for coding tools: `AGENTS.md`
-- Architecture: `docs/architecture.md`
-- Getting started: `docs/quickstart.md`
+See [quickstart](docs/quickstart.md), [architecture](docs/architecture.md), and [module map](modules/CODE.md). OCI scripts live in `deploy/oracle`; a separate Vercel static-shell deployment is in `deploy/vercel`.
 
-## Core principles
-
-- Modular ownership and clear boundaries.
-- Complete local development mode without cloud dependencies.
-- Deployed mode for production infrastructure.
-- Small, navigable documentation.
-- Automated tests protect behavior and regressions.
-- No credentials, private prompts, or working notes in Git.
+Validation: install `requirements-dev.txt`, run `ruff check .`, `ruff format --check .`, `python -m compileall -q app modules shared`, `pytest -q`, and `docker build .`. Tests require an isolated PostgreSQL database configured with DATABASE_URL; CI supplies it without broker/cloud credentials.

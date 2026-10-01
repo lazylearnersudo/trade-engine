@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Trade Engine · Operations</title>
+    <link rel="icon" href="/assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+    <section id="auth" class="auth-page">
+      <div class="auth-brand">
+        <span class="mark">T</span><span>TRADE ENGINE</span>
+      </div>
+      <div class="auth-card">
+        <span class="eyebrow">YOUR EXECUTION WORKSPACE</span>
+        <h1>Every trade.<br />Under control.</h1>
+        <p>
+          Strategy execution, portfolio visibility, and risk controls in one
+          place.
+        </p>
+        <div id="auth-mode" class="notice"></div>
+        <form id="login-form">
+          <label
+            >Email or username<input
+              name="email"
+              autocomplete="username"
+              required
+              placeholder="you@example.com"
+          /></label>
+          <label
+            >Password<input
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              required
+          /></label>
+          <button class="primary" type="submit">Sign in <span>→</span></button>
+        </form>
+        <button class="text-button" id="forgot-button">Forgot password?</button>
+        <form id="reset-form" hidden>
+          <h2>Reset password</h2>
+          <label>Recovery token<input name="token" required /></label
+          ><label
+            >New password<input
+              name="password"
+              type="password"
+              minlength="10"
+              autocomplete="new-password"
+              required /></label
+          ><button class="primary">Update password</button>
+        </form>
+        <p id="auth-error" class="error" role="alert"></p>
+      </div>
+      <div class="auth-foot">
+        Explicit execution. Persistent history. Conservative defaults.
+      </div>
+    </section>
+    <div id="workspace" hidden>
+      <aside class="sidebar">
+        <a class="brand" href="#dashboard"
+          ><span class="mark">T</span
+          ><span>Trade Engine<small>EXECUTION PLATFORM</small></span></a
+        >
+        <div class="nav-label">WORKSPACE</div>
+        <nav aria-label="Main navigation">
+          <a href="#dashboard" data-page="dashboard">◫ <span>Overview</span></a
+          ><a href="#strategies" data-page="strategies"
+            >↗ <span>Strategies</span></a
+          >
+          <a href="#orders" data-page="orders">≡ <span>Orders</span></a
+          ><a href="#positions" data-page="positions"
+            >▥ <span>Positions</span></a
+          >
+          <div class="nav-label">CONTROL CENTER</div>
+          <a href="#brokers" data-page="brokers">⇄ <span>Brokers</span></a
+          ><a href="#risk" data-page="risk">◇ <span>Risk & operations</span></a>
+          <a href="#audit" data-page="audit">◷ <span>Activity log</span></a
+          ><a href="#users" data-page="users" id="admin-nav"
+            >⊞ <span>Administration</span></a
+          >
+        </nav>
+        <div class="sidebar-bottom">
+          <label class="theme-label"
+            >Appearance<select id="theme">
+              <option value="system">System</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select></label
+          >
+          <div class="identity">
+            <span class="avatar">TE</span>
+            <div>
+              <strong id="identity-name"></strong
+              ><small id="identity-role"></small>
+            </div>
+            <button id="logout" title="Sign out" aria-label="Sign out">
+              ↪
+            </button>
+          </div>
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <span id="breadcrumb">Workspace / Overview</span>
+          <div>
+            <span id="environment" class="badge"></span
+            ><span class="status-dot"></span
+            ><span id="connection">Connected</span>
+          </div>
+        </header>
+        <div id="safety-banner" class="safety-banner"></div>
+        <section id="content" aria-live="polite"></section>
+        <footer>
+          Trade Engine
+          <span>Market timezone: Asia/Kolkata · Prices in INR</span>
+        </footer>
+      </main>
+    </div>
+    <dialog id="strategy-dialog">
+      <form id="strategy-form">
+        <div class="dialog-head">
+          <h2 id="strategy-title">Create strategy</h2>
+          <button
+            type="button"
+            id="close-dialog"
+            class="text-button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <input type="hidden" name="id" /><label
+          >Strategy name<input
+            name="name"
+            required
+            maxlength="100"
+            placeholder="Weekly ETF allocation"
+        /></label>
+        <div class="form-grid">
+          <label
+            >Broker<select name="broker">
+              <option>DUMMY</option>
+              <option>DHAN</option>
+              <option>FYERS</option>
+              <option>SHOONYA</option>
+              <option>ZERODHA</option>
+            </select></label
+          >
+          <label
+            >Account<input name="account_id" value="paper" required /></label
+          ><label
+            >Instrument<select name="symbol">
+              <option>NIFTYBEES</option>
+              <option>GOLDBEES</option>
+            </select></label
+          ><label
+            >Allocation (₹)<input
+              name="budget"
+              type="number"
+              min="1"
+              max="1000000"
+              step="0.01"
+              value="2500"
+              required
+          /></label>
+          <label
+            >Limit price (optional)<input
+              name="limit_price"
+              type="number"
+              min="0.0001"
+              step="0.0001"
+              placeholder="Market order" /></label
+          ><label
+            >Daily schedule (IST)<input
+              name="schedule_time"
+              type="time"
+              min="09:15"
+              max="15:29"
+          /></label>
+        </div>
+        <p class="muted">
+          Weekdays only. Missed schedules older than 5 minutes are skipped.
+          Exchange holidays must be managed by disabling strategies.
+        </p>
+        <label class="check"
+          ><input name="enabled" type="checkbox" /> Enable strategy</label
+        ><button class="primary" type="submit">Save strategy</button>
+        <p id="strategy-error" class="error"></p>
+      </form>
+    </dialog>
+  </body>
+</html>

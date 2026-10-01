@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      context: ../..
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8100:8000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "3"
+  proxy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      APP_HOST: ${APP_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 96m
+    logging:
+      options:
+        max-size: 5m
+        max-file: "3"
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,11 @@
+services:
+  preview:
+    image: cloudflare/cloudflared:2026.9.1
+    command: tunnel --no-autoupdate --url http://127.0.0.1:8100
+    network_mode: host
+    restart: unless-stopped
+    mem_limit: 96m
+    logging:
+      options:
+        max-size: 5m
+        max-file: "3"

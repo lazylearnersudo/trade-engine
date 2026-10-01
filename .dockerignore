@@ -1,0 +1,14 @@
+.git
+.pat
+.docs
+prompts
+.env*
+!.env.example
+.venv
+tests
+__pycache__
+.pytest_cache
+.ruff_cache
+*.key
+*.pem
+*.log

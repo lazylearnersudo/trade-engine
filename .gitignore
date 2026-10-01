@@ -29,3 +29,7 @@ __pycache__/
 venv/
 target/
 *.log
+.ruff_cache/
+*.session
+*.token
+*.tar.gz

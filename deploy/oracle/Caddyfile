@@ -1,0 +1,13 @@
+{
+    auto_https disable_redirects
+}
+{$APP_HOST} {
+    tls {
+        issuer acme {
+            disable_http_challenge
+        }
+    }
+    encode gzip
+    reverse_proxy 127.0.0.1:8100
+    header Strict-Transport-Security "max-age=31536000"
+}
